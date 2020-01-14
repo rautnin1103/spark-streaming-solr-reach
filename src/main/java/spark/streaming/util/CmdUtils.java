@@ -11,7 +11,7 @@ public class CmdUtils {
         zkHostString.setRequired(true);
         options.addOption(zkHostString);
 
-        Option jassConfig = new Option("auth", "jassConfig", true, "jass config");
+        Option jassConfig = new Option("auth", "jaasConfig", true, "jass config");
         jassConfig.setRequired(false);
         options.addOption(jassConfig);
 

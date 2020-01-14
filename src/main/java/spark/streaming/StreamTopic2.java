@@ -2,26 +2,18 @@ package spark.streaming;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLException;
 import java.util.*;
 
 import org.apache.commons.cli.*;
 import org.apache.solr.client.solrj.io.SolrClientCache;
-import org.apache.solr.client.solrj.io.Tuple;
 import org.apache.solr.client.solrj.io.stream.DaemonStream;
 import org.apache.solr.client.solrj.io.stream.StreamContext;
-import org.apache.solr.client.solrj.io.stream.TopicStream;
-import org.apache.solr.common.params.MultiMapSolrParams;
-import org.apache.solr.common.params.SolrParams;
 import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.streaming.dao.TrackerDao;
-import spark.streaming.solr.SolrStreamingUtil;
 
 import static spark.streaming.solr.SolrStreamingUtil.*;
 import static spark.streaming.util.CmdUtils.getSolrStreamingCmdLineOptions;
@@ -31,7 +23,7 @@ public class StreamTopic2
 	private static final Logger logger = LoggerFactory.getLogger(StreamTopic2.class);
 
 	private static String zkHostString;
-	private static String jassConfig;
+	private static String jaasConfig;
 	private static String topicQuery;
 	private static String docFields;
 	private static String chkPointCollection;
@@ -41,6 +33,10 @@ public class StreamTopic2
 
 	public static void main( String[] args ) 
 	{
+		if(jaasConfig != null && !jaasConfig.isEmpty()) {
+			logger.info("Setting Up Jaas Config");
+			System.setProperty("java.security.auth.login.config", jaasConfig);
+		}
 		Options options = getSolrStreamingCmdLineOptions();
 		CommandLineParser parser = new DefaultParser();
 		HelpFormatter formatter = new HelpFormatter();
@@ -76,6 +72,9 @@ public class StreamTopic2
 			}
 			//load a properties file from class path, inside static method
 			prop.load(input);
+			if(hbaseTableName!=null && !hbaseTableName.isEmpty()) {
+				prop.setProperty("hbase.replay.table",hbaseTableName);
+			}
 			logger.info(prop.getProperty("jdbc.connection.url"));
 
 			TrackerDao trackerDao = new TrackerDao(prop);
@@ -90,7 +89,7 @@ public class StreamTopic2
 
 	private static void setParams(CommandLine cmd) {
 		zkHostString = cmd.getOptionValue("zkHostString");
-		jassConfig = cmd.getOptionValue("jassConfig");
+		jaasConfig = cmd.getOptionValue("jaasConfig");
 		topicQuery= cmd.getOptionValue("topicQuery");
 		docFields= cmd.getOptionValue("docFields");
 		chkPointCollection= cmd.getOptionValue("chkPointCollection");;

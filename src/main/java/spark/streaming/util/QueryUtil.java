@@ -5,11 +5,11 @@ import java.util.Date;
 
 public class QueryUtil {
 
-    public static String insertDestPathToEventTracker(String destinationPath, String tableName) {
+    public static String insertDestPathToEventTracker(String timeStamp, String destinationPath, String tableName) {
         String query=null;
         query = "upsert into "+ tableName+" values (" +
-                "'"+getCurrentDate()+"'"+"," +
-                "''," +
+                "'"+timeStamp+"'"+"," +
+                "'metadata'," +
                 "'"+destinationPath+"'"+")";
         return query;
     }

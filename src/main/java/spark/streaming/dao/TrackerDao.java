@@ -38,6 +38,8 @@ public class TrackerDao {
         }
     }
 
+
+
     private void  setDBConnectionUrl(){
         if(config.getProperty(DB_CONNECTION_URL)!=null) {
             this.dbUrl = config.getProperty(DB_CONNECTION_URL);
@@ -59,7 +61,7 @@ public class TrackerDao {
         }
     }
 
-    public void insertSolrStreamUpdate(String destinationPath){
+    public void insertSolrStreamUpdate(String timeStamp, String data){
         Connection connection = null;
         Statement statement = null;
         ResultSet rs = null;
@@ -69,7 +71,7 @@ public class TrackerDao {
             properties.setProperty("phoenix.schema.isNamespaceMappingEnabled", "true");
             connection = DriverManager.getConnection(dbUrl, properties);
             //connection = getDbConnection();
-            String query = insertDestPathToEventTracker(destinationPath,tableName);
+            String query = insertDestPathToEventTracker(timeStamp,data,tableName);
             if(printQuery) {
                 logger.info("Query::"+query);
             }
@@ -123,6 +125,9 @@ public class TrackerDao {
                     org.apache.hadoop.fs.LocalFileSystem.class.getName()
             );
             conf.set("hadoop.security.authentication", "Kerberos");
+            Properties properties = new Properties();
+            properties.setProperty("phoenix.schema.mapSystemTablesToNamespace", "true");
+            properties.setProperty("phoenix.schema.isNamespaceMappingEnabled", "true");
             UserGroupInformation.setConfiguration(conf);
             UserGroupInformation ugi = UserGroupInformation
                     .loginUserFromKeytabAndReturnUGI(config.getProperty("kerberos.principle"), config.getProperty("kerberos.keytab"));
@@ -130,7 +135,7 @@ public class TrackerDao {
                 try
                 {
                     return DriverManager
-                            .getConnection(Objects.requireNonNull(dbUrl));
+                            .getConnection(Objects.requireNonNull(dbUrl), properties);
                 }
                 catch (SQLException e)
                 {

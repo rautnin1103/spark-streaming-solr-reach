@@ -69,30 +69,15 @@ public class SolrStreamingUtil {
                     try {
                         ObjectMapper mapperObj = new ObjectMapper();
                         String jsonResp = mapperObj.writeValueAsString(tuple.fields);
-                        List destinationPathList = (ArrayList) tuple.fields.get("destinationPath");
-
-                        destinationPathList.forEach(destinationPath -> {
-                            trackerDao.insertSolrStreamUpdate((String) destinationPath);
-                        });
-
+                        List timeStampList = (ArrayList) tuple.fields.get("timeStamp");
                         System.out.println(jsonResp);
-
+                        trackerDao.insertSolrStreamUpdate((String) timeStampList.get(0), jsonResp);
                         List<String> jsonData = Arrays.asList(
                                 jsonResp);
-
                         Dataset<String> anotherPeopleDataset = spark.createDataset(jsonData, Encoders.STRING());
                         Dataset freshSolrDataset = spark.read().json(anotherPeopleDataset);
-
-
                         dsSolr.show();
                         freshSolrDataset.show();
-
-//						Dataset mergedDS = dsSolr.union(freshSolrDataset);
-//
-//						mergedDS.show();
-
-
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
