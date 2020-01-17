@@ -9,21 +9,104 @@
     <artifactId>spark-streaming-solr-reach</artifactId>
     <version>3.0</version>
 
-
     <properties>
+        <maven.test.skip>true</maven.test.skip>
+        <joda-time.version>2.10.1</joda-time.version>
+        <scala.version>2.11</scala.version>
+        <spark.version>2.3.0.2.6.5.1175-1</spark.version>
+        <phoenix.spark.version>4.7.0.2.6.5.1175-1</phoenix.spark.version>
+        <hadoop.version>2.7.3</hadoop.version>
+        <tika.version>1.14</tika.version>
+        <maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
+        <jdk.version>1.8</jdk.version>
+        <maven-shade-plugin.version>2.3</maven-shade-plugin.version>
+        <java-tuples>1.2</java-tuples>
+        <lombok.version>1.18.6</lombok.version>
+        <kafka.version>0.10.0.2.5.6.0-40</kafka.version>
+        <config.version>1.3.3</config.version>
+        <jsoup.version>1.8.3</jsoup.version>
+        <poi-ooxml.version>3.15</poi-ooxml.version>
+        <junit.version>4.12</junit.version>
+        <jackson.version>2.6.7.1</jackson.version>
+        <commons-compress.version>1.8</commons-compress.version>
+        <commons-math.version>2.2</commons-math.version>
+        <tools.version>1.8</tools.version>
+        <java-tuples>1.2</java-tuples>
+    </properties>
+
+<!--    <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <spark.version>2.3.2</spark.version>
+        &lt;!&ndash;<spark.version>2.3.2</spark.version>&ndash;&gt;
+
+        <spark.version>1.6.3.2.5.6.0-40</spark.version>
         <logback.version>1.2.3</logback.version>
-        <phoenix.spark.version>4.14.0-HBase-1.4</phoenix.spark.version>
-        <!--        <phoenix.spark.version>4.7.0.2.5.6.0-40</phoenix.spark.version>-->
+        &lt;!&ndash;<phoenix.spark.version>4.14.0-HBase-1.4</phoenix.spark.version>&ndash;&gt;
+        &lt;!&ndash;<phoenix.spark.version>4.7.0.2.5.6.0-40</phoenix.spark.version>&ndash;&gt;
+        <phoenix.spark.version>4.7.0.2.6.5.1175-1</phoenix.spark.version>
 
         <fasterxml.version>2.10.1</fasterxml.version>
-        <scala.version>2.11.12</scala.version>
-        <scala.binary.version>2.11</scala.binary.version>
+&lt;!&ndash;        <scala.version>2.11.12</scala.version>&ndash;&gt;
+        <scala.version>2.10</scala.version>
+        &lt;!&ndash;<scala.binary.version>2.11</scala.binary.version>&ndash;&gt;
+        <scala.binary.version>2.10</scala.binary.version>
 
 
-    </properties>
+    </properties>-->
+
+    <repositories>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+            <id>MavenCentral</id>
+            <name>Maven Central</name>
+            <url>http://central.maven.org/maven2/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+            <id>Hortonworks</id>
+            <name>Hortonworks Maven Central</name>
+            <url>http://repo.hortonworks.com/content/groups/public</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+            <id>HDPQA</id>
+            <name>HDP QA</name>
+            <url>http://nexus-private.hortonworks.com:8081/nexus/content/repositories/IN-QA/</url>
+        </repository>
+        <repository>
+            <id>ImageJ Public</id>
+            <url>http://maven.imagej.net/content/repositories/public/</url>
+        </repository>
+    </repositories>
 
 
     <!-- <repositories>
@@ -81,7 +164,7 @@
     </repositories> -->
 
 
-    <dependencies>
+    <!--<dependencies>
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -115,18 +198,18 @@
         <dependency>
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
-            <version>1.4</version>
+            <version>1.2</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-streaming_2.11</artifactId>
+            <artifactId>spark-streaming_${scala.version}</artifactId>
             <version>${spark.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.11</artifactId>
+            <artifactId>spark-core_${scala.version}</artifactId>
             <version>${spark.version}</version>
         </dependency>
 
@@ -136,11 +219,11 @@
             <version>3.5.19</version>
         </dependency>
 
-<!--        <dependency>
+&lt;!&ndash;        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
-        </dependency>-->
+        </dependency>&ndash;&gt;
 
 
         <dependency>
@@ -160,21 +243,193 @@
         </dependency>
 
 
+    </dependencies>-->
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jsp-api</artifactId>
+                    <groupId>javax.servlet.jsp</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>servlet-api</artifactId>
+                    <groupId>javax.servlet</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jetty-util</artifactId>
+                    <groupId>org.mortbay.jetty</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jetty</artifactId>
+                    <groupId>org.mortbay.jetty</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>servlet-api</artifactId>
+                    <groupId>javax.servlet</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jetty</artifactId>
+                    <groupId>org.mortbay.jetty</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jetty-util</artifactId>
+                    <groupId>org.mortbay.jetty</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming_${scala.version}</artifactId>
+            <version>${spark.version}</version>
+            <scope>provided</scope>
+        </dependency>
+<!--                <dependency>
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-sql_${scala.version}</artifactId>
+                    <version>${spark.version}</version>
+                    <scope>provided</scope>
+                </dependency>-->
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-hive_${scala.version}</artifactId>
+            <version>${spark.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <artifactId>spark-core_${scala.version}</artifactId>
+            <groupId>org.apache.spark</groupId>
+            <version>${spark.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>zookeeper</artifactId>
+                    <groupId>org.apache.zookeeper</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.javatuples</groupId>
+            <artifactId>javatuples</artifactId>
+            <version>${java-tuples}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda-time.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>        <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>2.4</version>
+    </dependency>
+        <dependency>
+            <groupId>org.apache.phoenix</groupId>
+            <artifactId>phoenix-spark</artifactId>
+            <version>${phoenix.spark.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.phoenix</groupId>
+            <artifactId>phoenix-core</artifactId>
+            <version>${phoenix.spark.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.lucidworks.spark</groupId>
+            <artifactId>spark-solr</artifactId>
+            <version>3.5.19</version>
+        </dependency>
+
     </dependencies>
 
-
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                    <compilerArgument>-Xlint:unchecked</compilerArgument>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven-shade-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <finalName>uber-${project.artifactId}-${project.version}</finalName>
+                    <artifactSet>
+                        <excludes>
+                            <exclude>junit:junit</exclude>
+                        </excludes>
+                    </artifactSet>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <!--<build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.4.1</version>
                 <configuration>
-                    <!-- get all project dependencies -->
+                    &lt;!&ndash; get all project dependencies &ndash;&gt;
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <!-- MainClass in mainfest make a executable jar -->
+                    &lt;!&ndash; MainClass in mainfest make a executable jar &ndash;&gt;
                     <archive>
                         <manifest>
                             <mainClass>spark.streaming.ReachSparkSolrMain</mainClass>
@@ -185,7 +440,7 @@
                 <executions>
                     <execution>
                         <id>make-assembly</id>
-                        <!-- bind to the packaging phase -->
+                        &lt;!&ndash; bind to the packaging phase &ndash;&gt;
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
@@ -194,7 +449,7 @@
                 </executions>
             </plugin>
         </plugins>
-    </build>
+    </build>-->
 
 
 </project>

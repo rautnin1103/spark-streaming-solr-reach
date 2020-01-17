@@ -38,7 +38,7 @@ public class StreamTopic2
 			System.setProperty("java.security.auth.login.config", jaasConfig);
 		}
 		Options options = getSolrStreamingCmdLineOptions();
-		CommandLineParser parser = new DefaultParser();
+		CommandLineParser parser = new BasicParser();
 		HelpFormatter formatter = new HelpFormatter();
 		CommandLine cmd;
 		try {
