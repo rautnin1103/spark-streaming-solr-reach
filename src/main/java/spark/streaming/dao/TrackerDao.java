@@ -128,9 +128,8 @@ public class TrackerDao implements Serializable {
                     org.apache.hadoop.fs.LocalFileSystem.class.getName()
             );
             conf.set("hadoop.security.authentication", "Kerberos");
-            Properties properties = new Properties();
-            properties.setProperty("phoenix.schema.mapSystemTablesToNamespace", "true");
-            properties.setProperty("phoenix.schema.isNamespaceMappingEnabled", "true");
+            logger.info(config.getProperty("kerberos.principle"));
+            logger.info(config.getProperty("kerberos.keytab"));
             UserGroupInformation.setConfiguration(conf);
             UserGroupInformation ugi = UserGroupInformation
                     .loginUserFromKeytabAndReturnUGI(config.getProperty("kerberos.principle"), config.getProperty("kerberos.keytab"));
