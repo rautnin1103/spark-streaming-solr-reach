@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.security.PrivilegedAction;
 import java.sql.*;
 import java.util.Objects;
@@ -13,7 +14,7 @@ import java.util.Properties;
 
 import static spark.streaming.util.QueryUtil.insertDestPathToEventTracker;
 
-public class TrackerDao {
+public class TrackerDao implements Serializable {
     private static final Logger logger = LoggerFactory.getLogger(TrackerDao.class);
 
     private Properties config;
@@ -66,12 +67,14 @@ public class TrackerDao {
         Statement statement = null;
         ResultSet rs = null;
         try{
-            Properties properties = new Properties();
-            properties.setProperty("phoenix.schema.mapSystemTablesToNamespace", "true");
-            properties.setProperty("phoenix.schema.isNamespaceMappingEnabled", "true");
-            connection = DriverManager.getConnection(dbUrl, properties);
-            //connection = getDbConnection();
+//            Properties properties = new Properties();
+//            properties.setProperty("phoenix.schema.mapSystemTablesToNamespace", "true");
+//            properties.setProperty("phoenix.schema.isNamespaceMappingEnabled", "true");
+//            connection = DriverManager.getConnection(dbUrl, properties);
+            connection = getDbConnection();
+            logger.info("Connection::"+ connection);
             String query = insertDestPathToEventTracker(timeStamp,data,tableName);
+            logger.info("DB_URL::"+dbUrl);
             if(printQuery) {
                 logger.info("Query::"+query);
             }
@@ -134,8 +137,9 @@ public class TrackerDao {
             return ugi.doAs((PrivilegedAction<Connection>) () -> {
                 try
                 {
+                    logger.info("DB_URL::"+dbUrl);
                     return DriverManager
-                            .getConnection(Objects.requireNonNull(dbUrl), properties);
+                            .getConnection(Objects.requireNonNull(dbUrl));
                 }
                 catch (SQLException e)
                 {

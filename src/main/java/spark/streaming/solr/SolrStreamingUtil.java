@@ -9,12 +9,16 @@ import org.apache.solr.common.params.SolrParams;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import spark.streaming.StreamTopic2;
 import spark.streaming.dao.TrackerDao;
 
 import java.io.IOException;
 import java.util.*;
 
 public class SolrStreamingUtil {
+    private static final Logger logger = LoggerFactory.getLogger(StreamTopic2.class);
 
     public static DaemonStream createDaemonStream(String zooKeeperHost , String topicQuery, String docFields,
                                                    String chkPointCollection, String collection, String topicId) {
@@ -46,6 +50,7 @@ public class SolrStreamingUtil {
         options.put("zkhost", zooKeeperHost);
         options.put("collection", collection);
         options.put("query", queryStr);
+        options.put("fields","file,message,timeStamp");
         options.put("request_handler", "/select"); //"/export"
 
         Dataset dsSolr = spark.read().format("solr").options(options).load();
@@ -68,10 +73,14 @@ public class SolrStreamingUtil {
                     // convert map to JSON String
                     try {
                         ObjectMapper mapperObj = new ObjectMapper();
+
                         String jsonResp = mapperObj.writeValueAsString(tuple.fields);
-                        List timeStampList = (ArrayList) tuple.fields.get("timeStamp");
+                        logger.info(jsonResp);
+                        Object timeStamp = tuple.fields.get("timeStamp");
+                        logger.info(String.valueOf(timeStamp));
+                        String timeStampStr = (String) tuple.fields.get("timeStamp");
                         System.out.println(jsonResp);
-                        trackerDao.insertSolrStreamUpdate((String) timeStampList.get(0), jsonResp);
+                        trackerDao.insertSolrStreamUpdate((String) timeStampStr, jsonResp);
                         List<String> jsonData = Arrays.asList(
                                 jsonResp);
                         Dataset<String> anotherPeopleDataset = spark.createDataset(jsonData, Encoders.STRING());
